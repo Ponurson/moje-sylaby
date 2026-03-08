@@ -1,0 +1,108 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    background-color: #f0f9ff;
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+}
+
+.container {
+    width: 100%;
+    max-width: 860px;
+}
+
+h1 {
+    margin: 0;
+    color: #0f4c81;
+    text-align: center;
+}
+
+.subtitle {
+    margin: 8px 0 24px;
+    text-align: center;
+    color: #335c7d;
+    font-size: 18px;
+}
+
+#app {
+    width: 100%;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.letter-group {
+    font-weight: 700;
+    font-size: 24px;
+    color: #e74c3c;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.sylaba {
+    width: 80px;
+    height: 80px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border: 3px solid #3498db;
+    border-radius: 15px;
+    font-size: 28px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    user-select: none;
+}
+
+.sylaba:active {
+    transform: scale(0.9);
+}
+
+.sylaba.clicked {
+    background-color: #2ecc71;
+    border-color: #27ae60;
+    color: #ffffff;
+}
+
+.reset-btn {
+    display: block;
+    margin: 8px auto 0;
+    padding: 10px 20px;
+    background-color: #95a5a6;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.reset-btn:hover {
+    background-color: #7f8c8d;
+}
+
+@media (max-width: 640px) {
+    .sylaba {
+        width: 68px;
+        height: 68px;
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+    }
+}
