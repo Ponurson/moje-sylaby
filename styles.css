@@ -89,6 +89,9 @@ h1 {
     padding: 14px;
     margin-bottom: 22px;
     box-shadow: 0 4px 10px rgba(15, 76, 129, 0.08);
+    position: sticky;
+    top: 10px;
+    z-index: 20;
 }
 
 .builder-panel.hidden {
@@ -380,6 +383,10 @@ h1 {
 
     .builder-actions {
         flex-direction: column;
+    }
+
+    .builder-panel {
+        top: 6px;
     }
 
     .library-syllables {
