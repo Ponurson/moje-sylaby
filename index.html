@@ -3,19 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Moje Sylaby - Nauka Czytania</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260308-case">
 </head>
 <body>
     <main class="container">
         <h1>Pierwsze Kroki: Sylaby</h1>
-        <p class="subtitle">Kliknij sylabe, aby ja uslyszec i zaznaczyc!</p>
+        <p id="subtitle" class="subtitle">Kliknij sylabe, aby ja uslyszec i zaznaczyc.</p>
+
+        <div class="mode-switch" role="group" aria-label="Wybierz tryb pracy">
+            <button id="mode-instant" class="mode-btn active" type="button">Tryb szybki</button>
+            <button id="mode-compose" class="mode-btn" type="button">Tryb skladania</button>
+            <button id="mode-compose-tree" class="mode-btn" type="button">Tryb skladania+drzewo</button>
+            <button id="mode-text" class="mode-btn" type="button">Tryb tekstu</button>
+        </div>
+
+        <div class="case-switch" role="group" aria-label="Wybierz wielkosc liter">
+            <button id="case-upper" class="case-btn active" type="button">WIELKIE LITERY</button>
+            <button id="case-lower" class="case-btn" type="button">male litery</button>
+        </div>
+
+        <section id="builder-panel" class="builder-panel hidden" aria-live="polite">
+            <p class="builder-title">Ulozone sylaby</p>
+            <div id="builder-sequence" class="builder-sequence"></div>
+            <p id="builder-empty" class="builder-empty">Klikaj sylaby, aby zbudowac ciag do odczytu.</p>
+            <div class="builder-actions">
+                <button id="play-sequence-btn" class="action-btn play-btn" type="button">Play</button>
+                <button id="insert-space-btn" class="action-btn" type="button">Wstaw spacje</button>
+                <button id="undo-sequence-btn" class="action-btn" type="button">Cofnij ostatnia</button>
+                <button id="clear-sequence-btn" class="action-btn" type="button">Wyczysc</button>
+            </div>
+        </section>
+
+        <section id="library-panel" class="library-panel hidden" aria-label="Rozszerzona biblioteka sylab">
+            <p class="builder-title">Biblioteka sylab (menu drzewiaste)</p>
+            <p class="library-note">Wybierz litere, potem podgrupe, a nastepnie sylabe.</p>
+            <div id="library-tree" class="library-tree"></div>
+        </section>
+
+        <section id="text-panel" class="text-panel hidden" aria-live="polite">
+            <p class="builder-title">Podzial tekstu na sylaby</p>
+            <p id="text-status" class="text-status">Wpisz tekst i kliknij przycisk podzialu.</p>
+            <textarea id="text-source" class="text-source" rows="3" placeholder="Np. Ala ma kota"></textarea>
+            <div class="text-controls">
+                <button id="text-convert-btn" class="action-btn" type="button">Podziel na sylaby</button>
+            </div>
+        </section>
 
         <div id="app"></div>
 
         <button id="reset-btn" class="reset-btn" type="button">Zacznij od nowa</button>
     </main>
 
-    <script src="app.js" defer></script>
+    <script src="app.js?v=20260308-case" defer></script>
 </body>
 </html>

@@ -30,6 +30,287 @@ h1 {
     font-size: 18px;
 }
 
+.mode-switch {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.mode-btn {
+    border: 2px solid #82b8dd;
+    background-color: #ffffff;
+    color: #0f4c81;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.mode-btn.active {
+    background-color: #0f4c81;
+    border-color: #0f4c81;
+    color: #ffffff;
+}
+
+.case-switch {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.case-btn {
+    border: 2px solid #82b8dd;
+    background-color: #ffffff;
+    color: #0f4c81;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.case-btn.active {
+    background-color: #0f4c81;
+    border-color: #0f4c81;
+    color: #ffffff;
+}
+
+.builder-panel {
+    background-color: #ffffff;
+    border: 2px solid #bed9ee;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 10px rgba(15, 76, 129, 0.08);
+}
+
+.builder-panel.hidden {
+    display: none;
+}
+
+.library-panel {
+    background-color: #ffffff;
+    border: 2px solid #bed9ee;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 10px rgba(15, 76, 129, 0.08);
+}
+
+.library-panel.hidden {
+    display: none;
+}
+
+.text-panel {
+    background-color: #ffffff;
+    border: 2px solid #bed9ee;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 10px rgba(15, 76, 129, 0.08);
+}
+
+.text-panel.hidden {
+    display: none;
+}
+
+.builder-title {
+    margin: 0 0 10px;
+    color: #0f4c81;
+    font-weight: 700;
+}
+
+.builder-sequence {
+    min-height: 48px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 10px;
+}
+
+.sequence-chip {
+    border: 2px solid #3498db;
+    background-color: #eaf6ff;
+    color: #0f4c81;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.sequence-chip:hover {
+    background-color: #d8eeff;
+    border-color: #1f7fc0;
+}
+
+.sequence-chip:active {
+    transform: scale(0.96);
+}
+
+.sequence-chip.space-chip {
+    border-style: dashed;
+    border-color: #d29b3e;
+    background-color: #fff5df;
+    color: #8b5b00;
+    min-width: 92px;
+}
+
+.builder-empty {
+    margin: 10px 0 0;
+    color: #5f7891;
+    font-size: 15px;
+}
+
+.builder-empty.hidden {
+    display: none;
+}
+
+.library-note {
+    margin: 0 0 10px;
+    color: #5f7891;
+    font-size: 14px;
+}
+
+.text-status {
+    margin: 0 0 10px;
+    color: #335c7d;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.text-source {
+    width: 100%;
+    border: 2px solid #c7def0;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 16px;
+    color: #2c4d66;
+    background-color: #f8fcff;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.text-source:focus {
+    outline: none;
+    border-color: #5fa7d7;
+}
+
+.text-controls {
+    margin-bottom: 10px;
+}
+
+.library-tree {
+    border-top: 1px solid #e1edf6;
+    padding-top: 8px;
+}
+
+.library-tree details {
+    border: 1px solid #d5e7f5;
+    border-radius: 8px;
+    padding: 6px 8px;
+    background-color: #fbfeff;
+}
+
+.library-tree details + details {
+    margin-top: 8px;
+}
+
+.library-tree summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: #0f4c81;
+}
+
+.library-prefix {
+    margin-top: 8px;
+}
+
+.library-prefix details {
+    background-color: #f4faff;
+}
+
+.library-syllables {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.library-syllable-btn {
+    border: 2px solid #7db5db;
+    background-color: #ffffff;
+    color: #0f4c81;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.library-syllable-btn:hover {
+    border-color: #3b8ec6;
+    background-color: #ebf6ff;
+}
+
+.library-syllable-btn:active {
+    transform: scale(0.96);
+}
+
+.builder-actions {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.action-btn {
+    border: 2px solid #82b8dd;
+    background-color: #f3f9ff;
+    color: #0f4c81;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: #e4f3ff;
+    border-color: #5fa7d7;
+}
+
+.action-btn:active {
+    transform: scale(0.97);
+}
+
+.play-btn {
+    background-color: #2ecc71;
+    border-color: #27ae60;
+    color: #ffffff;
+}
+
+.play-btn:hover {
+    background-color: #2dbf6b;
+    border-color: #239a55;
+}
+
+.action-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
+}
+
 #app {
     width: 100%;
 }
@@ -73,12 +354,6 @@ h1 {
     transform: scale(0.9);
 }
 
-.sylaba.clicked {
-    background-color: #2ecc71;
-    border-color: #27ae60;
-    color: #ffffff;
-}
-
 .reset-btn {
     display: block;
     margin: 8px auto 0;
@@ -96,10 +371,34 @@ h1 {
 }
 
 @media (max-width: 640px) {
+    .mode-btn,
+    .case-btn,
+    .action-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .builder-actions {
+        flex-direction: column;
+    }
+
+    .library-syllables {
+        gap: 6px;
+    }
+
+    .library-syllable-btn {
+        font-size: 14px;
+        padding: 6px 8px;
+    }
+
     .sylaba {
         width: 68px;
         height: 68px;
         font-size: 24px;
+    }
+
+    .sequence-chip {
+        font-size: 18px;
     }
 
     .subtitle {
