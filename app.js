@@ -15,6 +15,9 @@ const CASE_LOWER = "lower";
 const LIBRARY_DATA_URL = "syllables_pl_dict_12k.json";
 const SPACE_TOKEN = "__SPACE__";
 const MAX_PENDING_SYLLABLES = 2;
+const SpeechRecognitionApi = window.SpeechRecognition || window.webkitSpeechRecognition;
+const speechSupported = Boolean(SpeechRecognitionApi);
+const speechSecureMessage = "Wprowadzanie glosowe wymaga HTTPS (na GitHub Pages bedzie dzialac).";
 
 const POLISH_VOWELS = new Set(["a", "ą", "e", "ę", "i", "o", "u", "y", "ó"]);
 const POLISH_ENDING_DIGRAPHS = new Set(["rz", "sz", "cz", "ch", "dz", "dź", "dż"]);
@@ -46,6 +49,7 @@ const textPanel = document.getElementById("text-panel");
 const textStatus = document.getElementById("text-status");
 const textSource = document.getElementById("text-source");
 const textConvertButton = document.getElementById("text-convert-btn");
+const textVoiceButton = document.getElementById("text-voice-btn");
 
 const synth = window.speechSynthesis;
 
@@ -59,6 +63,9 @@ let currentLetterCase = CASE_UPPER;
 let libraryLoading = false;
 let libraryLoaded = false;
 let librarySyllables = [];
+let speechRecognition = null;
+let isSpeechListening = false;
+let hasSpeechResult = false;
 
 const FALLBACK_SYLLABLES = Array.from(new Set(dane.flatMap((item) => item.sylaby))).sort((a, b) => a.localeCompare(b, "pl"));
 
@@ -142,6 +149,29 @@ const setTextStatus = (message) => {
     if (textStatus) {
         textStatus.textContent = message;
     }
+};
+
+const canUseSpeechInput = () => speechSupported && window.isSecureContext;
+
+const updateVoiceInputButton = () => {
+    if (!textVoiceButton) {
+        return;
+    }
+
+    if (!speechSupported) {
+        textVoiceButton.disabled = true;
+        textVoiceButton.textContent = "Brak obslugi mowy";
+        return;
+    }
+
+    if (!canUseSpeechInput()) {
+        textVoiceButton.disabled = true;
+        textVoiceButton.textContent = "Wymagane HTTPS";
+        return;
+    }
+
+    textVoiceButton.disabled = false;
+    textVoiceButton.textContent = isSpeechListening ? "Zatrzymaj nasluch" : "Wprowadz glosowo";
 };
 
 const formatWithLetterCase = (value) => {
@@ -412,6 +442,104 @@ const applyTextInputToSequence = () => {
     setTextStatus("Tekst podzielono na sylaby. Kliknij sylabe, aby ja uslyszec.");
 };
 
+const initSpeechRecognition = () => {
+    if (!canUseSpeechInput() || speechRecognition) {
+        return;
+    }
+
+    speechRecognition = new SpeechRecognitionApi();
+    speechRecognition.lang = "pl-PL";
+    speechRecognition.continuous = false;
+    speechRecognition.interimResults = false;
+    speechRecognition.maxAlternatives = 1;
+
+    speechRecognition.onstart = () => {
+        isSpeechListening = true;
+        hasSpeechResult = false;
+        setTextStatus("Nasluch trwa...");
+        updateVoiceInputButton();
+    };
+
+    speechRecognition.onresult = (event) => {
+        const parts = [];
+
+        for (let i = event.resultIndex; i < event.results.length; i += 1) {
+            const result = event.results[i];
+            if (result.isFinal && result[0]?.transcript) {
+                parts.push(result[0].transcript);
+            }
+        }
+
+        const transcript = parts.join(" ").trim();
+        const normalized = normalizeInputText(transcript);
+
+        if (!normalized) {
+            setTextStatus("Nie rozpoznano tekstu. Sprobuj ponownie.");
+            return;
+        }
+
+        textSource.value = normalized;
+        hasSpeechResult = true;
+        applyTextInputToSequence();
+    };
+
+    speechRecognition.onerror = (event) => {
+        isSpeechListening = false;
+        updateVoiceInputButton();
+
+        const errorCode = event?.error || "nieznany";
+        const readableErrors = {
+            "not-allowed": "Brak zgody na mikrofon. Odblokuj mikrofon w ustawieniach strony.",
+            "service-not-allowed": "Usluga rozpoznawania mowy jest zablokowana w przegladarce.",
+            "audio-capture": "Nie wykryto mikrofonu.",
+            "no-speech": "Nie wykryto mowy. Sprobuj ponownie i mow blizej mikrofonu.",
+            aborted: "Nasluch zostal przerwany.",
+            network: "Blad sieci uslugi rozpoznawania mowy.",
+            "bad-grammar": "Nie mozna przetworzyc rozpoznanej wypowiedzi.",
+            "language-not-supported": "Jezyk polski nie jest obslugiwany przez te usluge."
+        };
+
+        setTextStatus(readableErrors[errorCode] || `Blad rozpoznawania mowy: ${errorCode}`);
+    };
+
+    speechRecognition.onend = () => {
+        isSpeechListening = false;
+        updateVoiceInputButton();
+
+        if (currentMode === MODE_TEXT && !hasSpeechResult) {
+            setTextStatus("Nasluch zakonczony bez wyniku.");
+        }
+    };
+};
+
+const toggleVoiceInput = () => {
+    if (!speechSupported) {
+        setTextStatus("Ta przegladarka nie obsluguje wprowadzania glosowego.");
+        return;
+    }
+
+    if (!canUseSpeechInput()) {
+        setTextStatus(speechSecureMessage);
+        return;
+    }
+
+    initSpeechRecognition();
+    if (!speechRecognition) {
+        return;
+    }
+
+    if (isSpeechListening) {
+        speechRecognition.stop();
+        return;
+    }
+
+    try {
+        speechRecognition.start();
+    } catch (_error) {
+        setTextStatus("Nie udalo sie uruchomic nasluchu. Sprobuj ponownie.");
+    }
+};
+
 const createTreeIndex = (syllables) => {
     const letterMap = new Map();
 
@@ -577,6 +705,7 @@ const setMode = (mode) => {
         return;
     }
 
+    const previousMode = currentMode;
     currentMode = mode;
 
     modeInstantButton.classList.toggle("active", mode === MODE_INSTANT);
@@ -600,9 +729,20 @@ const setMode = (mode) => {
     }
 
     if (mode === MODE_TEXT) {
-        setTextStatus("Wpisz tekst i kliknij przycisk podzialu.");
+        if (canUseSpeechInput()) {
+            setTextStatus("Wpisz tekst albo kliknij Wprowadz glosowo.");
+        } else if (!speechSupported) {
+            setTextStatus("Wpisz tekst i kliknij przycisk podzialu. Wprowadzanie glosowe nie jest obslugiwane.");
+        } else {
+            setTextStatus(`Wpisz tekst i kliknij przycisk podzialu. ${speechSecureMessage}`);
+        }
     }
 
+    if (previousMode === MODE_TEXT && mode !== MODE_TEXT && isSpeechListening && speechRecognition) {
+        speechRecognition.stop();
+    }
+
+    updateVoiceInputButton();
     renderSequence();
     updateSubtitle();
 };
@@ -670,13 +810,25 @@ const resetProgress = () => {
     clearSequence();
     stopSpeech();
 
+    if (isSpeechListening && speechRecognition) {
+        speechRecognition.stop();
+    }
+
     if (textSource) {
         textSource.value = "";
     }
 
     if (currentMode === MODE_TEXT) {
-        setTextStatus("Wpisz tekst i kliknij przycisk podzialu.");
+        if (canUseSpeechInput()) {
+            setTextStatus("Wpisz tekst albo kliknij Wprowadz glosowo.");
+        } else if (!speechSupported) {
+            setTextStatus("Wpisz tekst i kliknij przycisk podzialu. Wprowadzanie glosowe nie jest obslugiwane.");
+        } else {
+            setTextStatus(`Wpisz tekst i kliknij przycisk podzialu. ${speechSecureMessage}`);
+        }
     }
+
+    updateVoiceInputButton();
 };
 
 if (synth) {
@@ -726,6 +878,7 @@ undoSequenceButton.addEventListener("click", () => {
 clearSequenceButton.addEventListener("click", clearSequence);
 
 textConvertButton.addEventListener("click", applyTextInputToSequence);
+textVoiceButton.addEventListener("click", toggleVoiceInput);
 
 textSource.addEventListener("keydown", (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
