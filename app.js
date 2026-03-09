@@ -241,15 +241,27 @@ const renderSequence = () => {
 
     sequence.forEach((token, index) => {
         const isSpace = token === SPACE_TOKEN;
+        const isTextMode = currentMode === MODE_TEXT;
         const chip = document.createElement("button");
         chip.type = "button";
         chip.className = isSpace ? "sequence-chip space-chip" : "sequence-chip";
         const displayToken = formatWithLetterCase(token);
         chip.textContent = isSpace ? "" : displayToken;
-        chip.title = isSpace ? "Spacja" : displayToken;
-        chip.setAttribute("aria-label", isSpace ? "Usun spacje" : `Usun sylabe ${displayToken}`);
+        chip.title = isSpace ? "Spacja" : isTextMode ? `Czytaj ${displayToken}` : displayToken;
+        chip.setAttribute("aria-label", isSpace
+            ? isTextMode ? "Spacja" : "Usun spacje"
+            : isTextMode
+                ? `Czytaj sylabe ${displayToken}`
+                : `Usun sylabe ${displayToken}`);
 
         chip.addEventListener("click", () => {
+            if (currentMode === MODE_TEXT) {
+                if (!isSpace) {
+                    queueSyllable(token);
+                }
+                return;
+            }
+
             sequence.splice(index, 1);
             renderSequence();
         });
@@ -397,7 +409,7 @@ const applyTextInputToSequence = () => {
 
     sequence.splice(0, sequence.length, ...tokens);
     renderSequence();
-    setTextStatus("Tekst podzielono na sylaby i dodano do gornego paska.");
+    setTextStatus("Tekst podzielono na sylaby. Kliknij sylabe, aby ja uslyszec.");
 };
 
 const createTreeIndex = (syllables) => {
@@ -554,7 +566,7 @@ const updateSubtitle = () => {
         [MODE_INSTANT]: "Kliknij sylabe, aby od razu ja uslyszec.",
         [MODE_COMPOSE]: "Klikaj sylaby, buduj ciag i odtworz go przyciskiem Play.",
         [MODE_COMPOSE_TREE]: "Tryb drzewiasty: baza slownikowa 10 000+ sylab do skladania.",
-        [MODE_TEXT]: "Tryb tekstu: wpisz zdanie i podziel je na sylaby."
+        [MODE_TEXT]: "Tryb tekstu: wpisz zdanie, podziel je i klikaj sylaby, aby je uslyszec."
     };
 
     subtitle.textContent = subtitleByMode[currentMode] || subtitleByMode[MODE_INSTANT];
@@ -591,6 +603,7 @@ const setMode = (mode) => {
         setTextStatus("Wpisz tekst i kliknij przycisk podzialu.");
     }
 
+    renderSequence();
     updateSubtitle();
 };
 
